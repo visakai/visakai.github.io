@@ -1,1 +1,111 @@
-ShanDong
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .button {
+      font-size: 20px;
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+  </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+  // # 1 2 3 4 PuTong
+  // # 2 4 1 3 ShanDong
+  function change_tone(pinyin){
+    console.log("received pinyin: " + pinyin);
+    var tone = pinyin[pinyin.length -1];
+    console.log("tone: " + tone);
+    var new_tone = "2";
+    switch (tone) {
+      case '1':
+        new_tone = '2';
+        break;
+      case '2':
+        new_tone = '4';
+        break;
+      case '3':
+        new_tone = '1';
+        break;
+      case '4':
+        new_tone = '3';
+        break;
+      default:
+        new_tone = "2";
+    }
+
+    console.log("new_tone: " + new_tone);
+
+    var new_pinyin = pinyin.slice(0, -1) + new_tone;
+    console.log("new_pinyin: " + new_pinyin);
+    return new_pinyin;
+  }
+
+  function shandongize(putonghua){
+    console.log("received putonghua: " + putonghua);
+    console.log(typeof putonghua);
+    console.log(putonghua.length);
+    console.log(putonghua[0]);
+
+    var sd_sentence = '';
+    for (var i = 0; i < putonghua.length; i++) {
+      console.log(putonghua[i]);
+      var sd_word = change_tone(putonghua[i]);
+      sd_sentence += `<phoneme alphabet="x-amazon-pinyin" ph="${sd_word}"></phoneme>`;
+
+    }
+
+    console.log(sd_sentence);
+    return sd_sentence;
+
+
+  }
+
+  function generate_sound(message){
+    console.log("making mp3")
+    console.log(message);
+    $.get('https://shandonghua.herokuapp.com/sound', function(data, status){
+      console.log("Data: " + data + "\nStatus: " + status);
+      console.log("data.result: " + data.result);
+      var mp3_url = "https://ttsmp3.com/created_mp3/" + data;
+      $("#mp3_source").attr("src", mp3_url);
+    });
+  }
+
+  $(document).ready(function(){
+    $("button").click(function(){
+      $("p").hide();
+      var text = $('textarea#userinput').val();
+      var url = `https://helloacm.com/api/pinyin/?cached&s=${text}&t=1`
+      $.get(url, function(data, status){
+        console.log("Data: " + data + "\nStatus: " + status);
+        console.log("data.result: " + data.result);
+        generate_sound(shandongize(data.result));
+      });
+  });
+  
+});
+</script>
+</head>
+<body>
+
+  <h2>山东话</h2>
+
+  <textarea id="userinput" rows="20" cols="100" maxlength="2000">闲言碎语</textarea>
+  <div><button class="button">朗读</button></div>
+  <div>
+    <audio controls autoplay>
+      <source id="mp3_source"/>
+    </audio>
+  </div>
+
+</body>
+</html>
