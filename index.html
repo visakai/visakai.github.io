@@ -77,10 +77,14 @@
       console.log("data.result: " + data.result);
       var mp3_url = "https://ttsmp3.com/created_mp3/" + data;
       $("#mp3_source").attr("src", mp3_url);
+      $('#audio_box')[0].load();
+      $('#audio_box')[0].play();
+
     });
   }
 
   $(document).ready(function(){
+
     $("button").click(function(){
       $("p").hide();
       var text = $('textarea#userinput').val();
@@ -89,9 +93,10 @@
         console.log("Data: " + data + "\nStatus: " + status);
         console.log("data.result: " + data.result);
         generate_sound(shandongize(data.result));
+
       });
   });
-  
+
 });
 </script>
 </head>
@@ -101,11 +106,11 @@
 
   <textarea id="userinput" rows="20" cols="100" maxlength="2000">闲言碎语</textarea>
   <div><button class="button">朗读</button></div>
-  <div>
-    <audio controls autoplay>
-      <source id="mp3_source"/>
+
+    <audio id='audio_box' controls autoplay>
+      <source id="mp3_source" src="https://xx.ttsmp3.com/created_mp3/41d535ad56f6fcf307d2e96f7126fcef.mp3"/>
     </audio>
-  </div>
+
 
 </body>
 </html>
